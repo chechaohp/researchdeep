@@ -2,7 +2,7 @@ import tensorflow as tf
 from sklearn.utils import shuffle
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import time
+# import time
 from tensorflow.examples.tutorials.mnist import input_data
 import numpy as np
 
@@ -39,7 +39,7 @@ hidden_input4, hidden_input5, hidden_input6 = 480, 560, 686
 # Model
 
 X = tf.placeholder(dtype = tf.float32, name = 'X', shape = [1,images.shape[1]])
-Y = tf.placeholder(dtype = tf.float32, name = 'Y', shape = labels.shape)
+# Y = tf.placeholder(dtype = tf.float32, name = 'Y', shape = labels.shape)
 # parameters to Discriminator Net
 D_W1 = tf.Variable(tf.zeros(shape = [images.shape[1],hidden_input1], dtype = tf.float32),name = 'D_W1')
 D_b1 = tf.Variable(0.0, dtype = tf.float32, name = 'D_b1')
@@ -61,25 +61,6 @@ G_W6 = tf.Variable(tf.zeros(shape = (hidden_input5, hidden_input6), dtype = tf.f
 G_b6 = tf.Variable(0.0, dtype = tf.float32, name = 'G_b6')
 G_W7 = tf.Variable(tf.zeros(shape = (hidden_input6, 784), dtype = tf.float32), name = 'G_W7')
 G_b7 = tf.Variable(0.0, dtype = tf.float32, name = 'G_b7')
-
-# Z = tf.random_uniform(minval = -1,maxval = 1, dtype = tf.float32, name = 'Z',shape = [1,G_input])
-
-# Generator Net
-# G11 = tf.matmul(Z,G_W1) + G_b1
-# G11A = tf.atan(G11)
-# G12 = tf.matmul(G11A,G_W2) + G_b2
-# G12A = tf.nn.relu(G12)
-# G13 = tf.matmul(G12A, G_W3) + G_b3
-# G13A = tf.atan(G13)
-
-# G14 = tf.matmul(G13A, G_W4) + G_b3
-# G14A = tf.nn.relu(G14)
-# G15 = tf.matmul(G14A, G_W5) + G_b3
-# G15A = tf.tanh(G15)
-# G16 = tf.matmul(G15A, G_W6) + G_b3
-# G16A = tf.nn.relu(G16)
-# G17 = tf.matmul(G16A, G_W7) + G_b3
-# G17A = tf.sigmoid(G17, name = 'output G')
 
 # Discriminator
 def discriminator(x):
@@ -125,17 +106,22 @@ D_optimizer = tf.train.AdamOptimizer(learning_rate= 0.00009, beta1 = 0.9, beta2 
 G_optimizer = tf.train.AdamOptimizer(learning_rate= 0.00009, beta1 = 0.9, beta2 = 0.999, epsilon= 0.00000001).minimize(G_cost)
 #
 init = tf.global_variables_initializer()
+loss = []
+D = []
+G = []
 with tf.Session() as sess:
     sess.run(init)
     for epoch in range(epoch_num):
         random_int = np.random.randint(len(images)-5)
         current_image = np.expand_dims(images[random_int],axis = 0)
-        sample_Z = np.random.uniform(-1.,1.,size = [1,G_input])
-        sess.run(D_optimizer,feed_dict = {X: current_image, Z:sample_Z})
-        sess.run(G_optimizer,feed_dict = {X: current_image, Z:sample_Z})
-        if epoch % 10 == 0:
-            print(D_cost.eval())
-            print(G_cost.eval())
-            fig = plot(generator(sample_Z).eval())
-            fig.savefig('Click_Me_{}.png', bbox_inches='tight')
+        sample_Z = sess.run(tf.random_uniform(minval = -1.,maxval = 1.,shape = [1,G_input]))
+        D = sess.run([D_optimizer,D_cost],feed_dict = {X: current_image, Z:sample_Z})
+        G = sess.run(G_optimizer,feed_dict = {Z:sample_Z})
+        # print(sess.run(D_cost))
+        loss += [sess.run(D_cost, feed_dict = {X: current_image, Z:sample_Z})]
+        # if epoch % 10 == 0:
+            print(sess.run(D_cost,feed_dict = {X: current_image, Z:sample_Z}))
+            print(sess.run(G_cost,feed_dict = {Z:sample_Z}))
+            # fig = plot(sess.run(generator(sample_Z)))
+            # fig.savefig('Click_Me_{}.png', bbox_inches='tight')
         
