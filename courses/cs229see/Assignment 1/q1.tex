@@ -1,0 +1,312 @@
+\documentclass[a4paper,14pt]{article}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\geometry{
+    top=1.5cm,
+    bottom=1.5cm,
+    left=2.5cm,
+    right=1.5cm
+}
+\title{Solution for Assignment 1}
+\date{2018-09-25}
+\author{Chinh La}
+\begin{document}
+
+\maketitle
+\pagenumbering{arabic}
+\noindent\rule{\textwidth}{0.5pt}
+\section{Newton's method for computing least squares}
+\begin{enumerate}[label=(\alph*)]
+    \item Find the Hessian of cost function $J(\theta)=\frac{1}{2}\sum_{i=1}^{m} (\theta^{T}x^{(i)}-y^{(i)})^{2}$
+% \end{enumerate}
+
+\textbf{Answer:}
+
+\begin{equation}
+    J({\theta})=\frac{1}{2}\sum_{i=1}^{m} (\theta^{T}x^{(i)}-y^{(i)})^{2}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial J(\theta)}{\partial \theta_{i}} = \sum_{i=1}^{m}(\theta^{T}x^{(i)}-y^{(i)})x^{(i)}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial^{2} J(\theta)}{\partial \theta_{i} \partial \theta_{j}} = \sum_{i=1}^{m}x^{(j)}x^{(i)}
+\end{equation}
+
+The \textbf{Hessian} matrix of cost function $J(\theta)$ is an $n \times n$ matrix where
+
+\begin{equation*}
+    H_{ij} = \sum_{i=0}^{m}x^{i}x^{j} = X^{T}X_{ji}
+\end{equation*}
+with $X = \begin{bmatrix}
+    x^{(1)} & x^{(2)} & \cdots & x^{(m)}
+\end{bmatrix}^{T}$
+
+% \begin{enumerate}[label=(\alph*)]
+    \item Show that the first iteration of Newton's method gives us $\theta^{*}=(X^{T}X)^{-1}X^{T}\vec{y}$
+    
+    \textbf{Answer:}
+    As the notes 1 show, $\theta \in R^{1xn}$, Newton's method performs the following update:
+
+    \begin{equation}
+        \theta_{i+1} := \theta_{i} - H^{-1} \nabla_{\theta} l(\theta_{i})
+    \end{equation}
+    
+    In this problem, $\nabla_{\theta}l(\theta) = X^{T}(X\theta^{T}-\vec{y})$, $\vec{y} = \begin{bmatrix}
+        y^{(1)} & y^{(2)} & \cdots & y^{(m)}
+    \end{bmatrix}^{T}, H^{-1} = (X^{T}X)^{-1}$.
+    
+    Let $\theta_{0} = \vec{0}^{T}$, we have
+    
+    \begin{equation}
+        \Rightarrow \theta_{1} = \theta_{0} - (X^{T}X)^{-1}X^{T}(X\theta^{T}-\vec{y})
+    \end{equation}
+    
+    \begin{equation}
+        \Rightarrow \theta_{1} = \vec{0}^T - (X^{T}X)^{-1}X^{T}(X\dot \vec{0}-\vec{y})
+    \end{equation}
+    
+    \begin{equation}
+        \Rightarrow \theta_{1} = (X^{T}X)^{-1}X^{T}\vec{y}
+    \end{equation}
+    
+    So $\theta_{1}$ is optimal solution of cost function $l(\theta)$ and we only need 1 iteration.
+\end{enumerate}
+
+
+\noindent\rule{\textwidth}{0.5pt}
+\section{Locally-weighted logistic regression}
+See a1q2.py file
+
+\noindent\rule{\textwidth}{0.5pt}
+\section{Multivariate least squares}
+\begin{enumerate}[label=(\alph*)]
+    \item The cost function for this case is
+
+\begin{equation*}
+    J(\Theta) = \frac{1}{2}\sum_{n=1}^{m}\sum_{j=1}^{p}\left( \left( \Theta^{T}x^{(i)} \right)_{j} - y_{j}^{(i)} \right)^{2}
+\end{equation*}
+
+Find the matrix way to write it.
+
+\textbf{Answer:}
+
+Let $ X = \begin{bmatrix}
+    x_{1}^{(1)} & x_{2}^{(1)} & \cdots & x_{n}^{(1)}\\
+    x_{1}^{(2)} & x_{2}^{(2)} & \cdots & x_{n}^{(2)}\\
+    \vdots      & \vdots      & \ddots & \vdots     \\
+    x_{1}^{(m)} & x_{2}^{(m)} & \cdots & x_{n}^{(m)}\\
+\end{bmatrix}, Y = \begin{bmatrix}
+    y_{1}^{(1)} & y_{2}^{(2)} & \cdots & y_{p}^{(1)}\\
+    y_{1}^{(2)} & y_{2}^{(2)} & \cdots & y_{p}^{(2)}\\
+    \vdots      & \vdots      & \ddots & \vdots     \\
+    y_{p}^{(m)} & y_{2}^{(m)} & \cdots & y_{p}^{(m)}\\
+\end{bmatrix}, \Theta = \begin{bmatrix}
+    \theta_{1(1)} & \theta_{1(2)} & \cdots & \theta_{1(p)}\\
+    \theta_{2(1)} & \theta_{2(2)} & \cdots & \theta_{2(p)}\\
+    \vdots        & \vdots        & \ddots & \vdots \\
+    \theta_{n(1)} & \theta_{n(2)} & \cdots & \theta_{n(p)}
+\end{bmatrix}$
+
+We have 
+
+\begin{equation}
+    J(\Theta) = tr\left( (X\Theta-Y)^{T}(X\Theta-Y) \right)
+\end{equation}
+\begin{equation}
+    J(\Theta) = \sum_{i=1}^{m} \left( (X\Theta-Y)^{T}(X\Theta-Y) \right)_{ii}
+\end{equation}
+\begin{equation}
+    J(\Theta) = \sum_{i=1}^{m} \left( (X\Theta-Y)^{T}(X\Theta-Y) \right)_{ii}
+\end{equation}
+where $\left( (X\Theta-Y)^{T}(X\Theta-Y) \right)_{ii}$ is the ith element on main diagonal of $(\Theta^{T}X-Y)^{T}(\Theta^{T}X-Y)$ and 
+\begin{equation}
+    (x\Theta-Y) = \begin{bmatrix}
+    \theta^{T}x^{(1)}- & \theta^{T}x^{(2)} & \cdots & \theta^{T}x^{(m)}
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+    \left((X\Theta-Y)^{T}(X\Theta-Y) \right)_{ii} = \sum_{j=1}^{p} \left( \left( \Theta^{T}x^{(i)} \right)_{j} - y_{j}^{(i)} \right)^{2}
+    \end{equation}
+\begin{equation} 
+    (10)(12)\Rightarrow  J(\Theta) = \frac{1}{2}\sum_{n=1}^{m}\sum_{j=1}^{p}\left( \left( \Theta^{T}x^{(i)} \right)_{j} - y_{j}^{(i)} \right)^{2}
+\end{equation}
+
+
+    \item Find the closed form solution for $\Theta$ which minimizes $J(\Theta)$. This is equivalent to the normal equations for multivariate case.
+
+\textbf{Answer:}
+
+\begin{equation}
+    \nabla_{\Theta} J(\Theta) = \frac{1}{2}\nabla_{\Theta} tr\left( (X\Theta-Y)^{T}(X\Theta-Y) \right)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\Theta} J(\Theta) = \frac{1}{2}\nabla_{\Theta} tr\left((\Theta^{T}X^{T}-Y^{T})(X\Theta-Y) \right)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\Theta} J(\Theta) = \frac{1}{2}\nabla_{\Theta} tr(\Theta^{T}X^{T}X\Theta - \Theta^{T}X^{T}Y - Y^{T}X\Theta + Y^{T}Y)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\Theta} J(\Theta) = \frac{1}{2}\nabla_{\Theta}tr(\Theta^{T}X^{T}X\Theta) - \nabla_{\Theta}tr(\Theta^{T}X^{T}Y) - \nabla_{\Theta}tr(Y^{T}X\Theta)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\Theta} J(\Theta) = \frac{1}{2}\left((X^{T}X)^{T}\Theta+(X^{T}X)\Theta - X^{T}Y - (Y^{T}X)^{T} \right)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\Theta} J(\Theta) = (X^{T}X)\Theta - X^{T}Y
+\end{equation}
+
+Let $\nabla_{\Theta} J(\Theta) = 0$ and we have the optimal $\Theta^{*}$
+\begin{equation}
+    \Theta^{*} = (X^{T}X)^{-1}X^{T}Y
+\end{equation}
+
+    \item Suppose instead of considering the multivariate vetors $y^{(i)}$ all at once, we instead cumpute each variable
+    $y_{j}^{(i)}$ separately for each $j=1,\dots,p$. In this case, we have a p individual linear models, of the form \begin{equation*}
+        y_{j}^{(i)} = \theta_{j}^{T}x^{(i)}, j=1,\dots,p
+    \end{equation*} (So here, each $\theta_{j} \in \Re^{n}$). How do the parameters from these $p$ independent least
+    squares problems compare to the multivariate solution?
+
+\textbf{Answer:}
+
+As we have
+\begin{equation}
+    \theta_{i} = (X^{T}X)^{-1}X^{T}\vec{y}_{i}
+\end{equation}
+where $\Theta = \begin{bmatrix} 
+    \theta_{1} & \theta_{2} & \cdots & \theta_{m}
+\end{bmatrix}, Y = \begin{bmatrix}
+    y_{1} & y_{2} & \cdots & y_{m}
+\end{bmatrix}$
+
+Then the solution of each independent model become the solution of multivariate case.
+\end{enumerate}
+
+\noindent\rule{\textwidth}{0.5pt}
+
+\section{Naive Bayes}
+
+In this problem, we look at maximum likelihood parameter estimation using the naive
+Bayes assumption. Here, the input features $x_{j}, j = 1,\dots,n$ to our model are discrete,
+binary-valued variable, so $x_{j} \in \{0,1\}$. We call $x=\begin{bmatrix}
+    x_{1} & x_{2} & \dots & x_{n}
+\end{bmatrix}$ to be the input vector. For each training example, our output targets are
+single binary-value $y \in \{0,1\}$. Our model is then parameterized  by $\phi_{j|y=0} = p(x_{j}=1|y_{j}=0),\phi_{j|y=1} = p(x_{j}=1|y_{j}=1)$
+and $\phi_{y} = p(y=1)$. We model the joint distribution of $(x,y)$ according to
+\begin{align*}
+    p(y) &= (\phi_{y})^{y}(1-\phi_{y})^{1-y} \\
+    p(x|y=0) &= \prod_{j=1}^{n}p(x_{j}|y=0) \\
+                &= \prod_{j=1}^{n}(\phi_{j|y=0})^{x_{j}}(1-\phi_{j|y=0})^{1-x_{j}} \\
+    p(x|y=1) &= \prod_{j=1}^{n}p(x_{j}|y=1) \\
+                &= \prod_{j=1}^{n}(\phi_{j|y=1})^{x_{j}}(1-\phi_{j|y=1})^{1-x_{j}}
+\end{align*}
+\begin{enumerate}[label=(\alph*)]
+    \item Find the joint likelihood function $l(\varphi) = \log \left(\prod_{i=1}^{m}p(x^{(i)},y^{(i)};\varphi) \right)$ in terms of 
+    the model parameters given above. Here, $\varphi$ represents the entire parameters $\{\phi_{y},\phi_{y=0},\phi_{y=1},j=1,\dots,n\}$.
+
+\textbf{Answers:}
+
+\begin{equation}
+    l(\varphi) = \log \prod_{i=1}^{m} p(x^{(i)},y^{(i)};\varphi)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \log\left(p(x^{(i)},y^{(i)};\varphi)\right)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \log\left(p(x^{(i)}|y^{(i)};\varphi)p(y^{(i);\varphi})\right)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \left( \log p(x^{(i)}|y^{(i)};\varphi)+ \log p(y^{(i)};\varphi) \right)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \left( \log \prod_{j=1}^{n}p(x_{j}^{(i)}|y^{(i)};\varphi)+ \log p(y^{(i)};\varphi) \right)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \left( \sum_{j=1}^{n} \log p(x_{j}^{(i)}|y^{(i)};\varphi)+ \log p(y^{(i)};\varphi) \right)
+\end{equation}
+\begin{equation}
+    l(\varphi) = \sum_{i=1}^{m} \left( \sum_{j=1}^{n} \left(x_{j}^{(i)}\log \phi_{j|y} +(1-x_{j}^{(i)})\log(1-\phi_{j|y}) \right)
+    + y^{(i)}\log \phi_{y} + (1-y^{(i)})\log(1-\phi_{y}) \right)
+\end{equation}
+
+    \item Show that the parameters which maximize the likelihood function are the same as those given in the lecture notes: i.e., that
+    \begin{align*}
+        \phi_{j|y=0} &= \frac{\sum_{i=1}^{m} 1\{x_{j}^{(i)} = 1 \wedge y^{(i)} = 0\}}{\sum_{i=1}^{m} 1\{y^{(i)} = 0\}}\\
+        \phi_{j|y=1} &= \frac{\sum_{i=1}^{m} 1\{x_{j}^{(i)} = 1 \wedge y^{(i)} = 1\}}{\sum_{i=1}^{m} 1\{y^{(i)} = 1\}}\\
+        \phi_{y} &= \frac{\sum_{i=1}^{m} 1\{y^{(i)} = 1\}}{m}
+    \end{align*}
+
+\textbf{Answers:}
+
+\begin{equation}
+    \nabla_{\phi_{j|y=0}} l(\varphi) = \sum_{i=1}^{m} \left( \frac{x_{j}^{(i)}}{\phi_{j|y=0}}1\{y^{(i)}=0\} - \frac{1-x_{j}^{(i)}}{1-\phi_{j|y=0}}1\{y^{(i)}=0\} \right)
+\end{equation}
+\begin{equation}
+    \Rightarrow \nabla_{\phi_{j|y=0}} l(\varphi) = 0, \sum_{i=1}^{m} \left( \frac{x_{j}^{(i)}}{\phi_{j|y=0}} - \frac{1-x_{j}^{(i)}}{1-\phi_{j|y=0}} \right)1\{y^{(i)}=0\}=0
+\end{equation}
+\begin{equation}
+    \Rightarrow \sum_{i=1}^{m} \left( x_{j}^{(i)}(1-\phi_{j|y=0}) - (1-x_{j}^{(i)})\phi_{j|y=0} \right)1\{y^{(i)}=0\}=0
+\end{equation}
+\begin{equation}
+    \Rightarrow \sum_{i=1}^{m} \left( x_{j}^{(i)} - \phi_{j|y=0} \right) 1\{ y^{(i)} = 0 \} = 0
+\end{equation}
+\begin{equation}
+    \Rightarrow \phi_{j|y=0} = \frac{ \sum_{i=1}^{m} x_{j}^{(i)}1\{y^{(i)}= 0\}}{\sum_{i=1}^{m}1\{y^{(i)}= 0\}}
+\end{equation}
+\begin{equation}
+    \Rightarrow \phi_{j|y=0} = \frac{ \sum_{i=1}^{m} 1\{x_{j}^{(i)} = 1 \wedge y^{(i)}= 0\}}{\sum_{i=1}^{m}1\{y^{(i)}= 0\}}
+\end{equation}
+
+With $\nabla_{\phi_{j|y=1}} l(\varphi) = 0$ we have the same result
+\begin{equation}
+    \phi_{j|y=1} = \frac{ \sum_{i=1}^{m} 1\{x_{j}^{(i)} = 1 \wedge y^{(i)}= 1\}}{\sum_{i=1}^{m}1\{y^{(i)}= 1\}}
+\end{equation}
+
+With $\nabla_{\phi_{y}} l(\varphi) = 0$ we have:
+
+\begin{equation}
+    \nabla_{\phi_{y}} l(\varphi) = \sum_{i=1}^{m} \left( \frac{y^{(i)}}{\phi_{y}} - \frac{1-y^{(i)}}{1-\phi_{y}} \right)
+\end{equation}
+\begin{equation}
+    \sum_{i=1}^{m} \left( y^{(i)}(1-\phi_{y}) - (1-y^{(i)})\phi_{y} \right) = 0
+\end{equation}
+\begin{equation}
+    \sum_{i=1}^{m} \left( y^{(i)}-\phi_{y} \right) = 0
+\end{equation}
+\begin{equation}
+    \sum_{i=1}^{m}y^{(i)}-m\phi_{y} = 0
+\end{equation}
+\begin{equation}
+    \phi_{y} = \frac{\sum_{i=1}^{m}y^{(i)}}{m} = \frac{\sum_{i=1}^{m}1\{y^{(i)}=1\}}{m}
+\end{equation}
+
+    \item Consider making a prediction on some new data point x using the most likely class estimate generated by the naive Bayes algorithm.
+    Show that the hypothesis returnd by naive Bayes is a linear classifier - i.e., if $p(y=0|x)$ and $p(y=1|x)$ are the class probabilities
+    return by naive Bayes, show that there exists some $\theta \in \Re^{n+1}$ such that
+    \begin{center}
+    $p(y=1|x) \ge p(y=0|x)$ if and only if $\theta^{T}\begin{bmatrix}1 \\ x \end{bmatrix} \ge 0$
+    \end{center}
+    (Assume $\theta_{0}$ is an intercept terms.)
+
+\textbf{Answers:}
+
+\begin{align}
+    &p(y=1|x) \ge p(y=0|x) \\
+    &\Longleftrightarrow \frac{p(y=1|x)}{p(y=0|x)} \ge 1 \\
+    &\Longleftrightarrow \frac{\left( \prod_{j=1}^{n} p(x_{j}|y=1) \right) p(y=1)}{\left( \prod_{j=1}^{n} p(x_{j}|y=0) \right) p(y=0)} \ge 1 \\
+    &\Longleftrightarrow \frac{ \left( \prod_{j=1}^{n} (\phi_{j|y=1})^{x_{j}}(1-\phi_{j|y=1})^{1-x_{j}} \right)\phi_{y}}{\left( \prod_{j=0}^{n} (\phi_{j|y=0})^{x_{j}}(1-\phi_{j|y=0})^{1-x_{j}} \right)(1-\phi_{y})} \ge 1 \\
+    &\Longleftrightarrow \sum_{j=1}^{n} \left( x_{j}\log \left( \frac{\phi_{j|y=1}}{\phi_{j|y=0}} \right) +(1-x_{j})\log \left( \frac{1-\phi_{j|y=1}}{1-\phi_{j|y=0}} \right)\right) + \log\left( \frac{ \phi_{y} }{ 1-\phi_{y} } \right) \ge 0 \\
+    &\Longleftrightarrow \sum_{j=1}^{n} x_{j}\log \left( \frac{(\phi_{j|y=1})(1-\phi_{j|y=0})}{(\phi_{j|y=0})(1-\phi_{j|y=1})} \right) + \sum_{j=1}^{n} \log \left( \frac{1-\phi_{j|y=1}}{1-\phi_{j|y=0}} \right) + \log\left( \frac{ \phi_{y} }{ 1-\phi_{y} } \right) \ge 0 \\
+    &\Longleftrightarrow \theta^{T} \begin{bmatrix}
+        1 \\ x
+    \end{bmatrix} \ge 0,
+\end{align}
+where
+\begin{align*}
+    \theta_{0} &= \sum_{j=1}^{n} \log \left( \frac{1-\phi_{j|y=1}}{1-\phi_{j|y=0}} \right) + \log\left( \frac{ \phi_{y} }{ 1-\phi_{y} } \right)\\
+    \theta_{j} &= \log \left( \frac{(\phi_{j|y=1})(1-\phi_{j|y=0})}{(\phi_{j|y=0})(1-\phi_{j|y=1})} \right), j=1,\dots,n
+\end{align*}
+\end{enumerate}
+\end{document}
