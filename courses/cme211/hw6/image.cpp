@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <boost/multi_array.hpp>
+#include <algorithm>
 
 
 #include "image.hpp"
@@ -64,18 +65,31 @@ void image::Convolution(boost::multi_array<unsigned char, 2> &input,
 }
 
 void image::BoxBlur(int k_size) {
-	boost::multi_array<int,2> kernel;
+	boost::multi_array<float,2> kernel(boost::extents[k_size][k_size]);
 	for (unsigned i = 0; i < k_size; i++)
 	{
 		for (unsigned j = 0; j < k_size; j++)
 		{
-			kernel[i][j] = 1;
+			kernel[i][j] = 1.f/k_size/k_size;
 		};
 	};
 	image::Convolution(this-> input, this -> output, kernel);
 }
 
 unsigned int image::Sharpness() {
-	boost::multi_array<int,2> kernel;
+	boost::multi_array<float,2> kernel(boost::extents[3][3]);
+	kernel[0][0] = 0.f;
+	kernel[0][1] = 1.f;
+	kernel[0][2] = 0.f;
+	kernel[1][0] = 1.f;
+	kernel[1][1] = -4.f;
+	kernel[1][2] = 1.f;
+	kernel[2][0] = 0.f;
+	kernel[2][1] = 1.f;
+	kernel[2][2] = 0.f;
 	
+	auto temp = this -> output;
+	image::Convolution(this -> output, temp, kernel);
+	unsigned int sharp = *std::max_element(temp.origin(), temp.origin() + temp.num_elements());
+	return sharp;
 }
