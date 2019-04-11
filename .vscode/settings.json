@@ -1,5 +1,4 @@
 {
-    "python.jediEnabled": false,
     "files.associations": {
         "iostream": "cpp",
         "ostream": "cpp",
