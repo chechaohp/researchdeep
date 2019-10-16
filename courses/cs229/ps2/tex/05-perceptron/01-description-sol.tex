@@ -1,0 +1,36 @@
+\begin{answer} 
+	\begin{enumerate}[label=\roman*.]
+		\item We know that
+		\begin{align}
+		\theta^{(0)}&=0 \\
+		\theta^{(1)}&=\alpha(y^{(1)}-h_{\theta^{(0)}}(\phi(x^{(1)}))\phi(x^{(1)})
+		\end{align}
+		
+		We can represent
+		\begin{align}
+		\beta_{1} &= \alpha(y^{(1)}-h_{\theta^{(0)}}(\phi(x^{(1)})) \\
+		\implies \theta^{(1)}&=\beta_{1} \phi(x^{(1)})\\
+		\implies \theta^{(2)}&=\theta^{(1)}+\alpha(y^{(2)}-h_{\theta^{(1)}}(\phi(x^{(2)}))\phi(x^{(2)})
+		\end{align}
+		Again we have
+		\begin{align}
+		\beta_{2} &= \alpha(y^{(2)}-h_{\theta^{(1)}}(\phi(x^{(2)})) \\
+		\therefore \theta^{(2)}&=\beta_{1} \phi(x^{(1)})+\beta_{2} \phi(x^{(2)})\\
+		\theta^{(3)}&=\theta^{(2)}+\alpha(y^{(3)}-h_{\theta^{(2)}}(\phi(x^{(3)}))\phi(x^{(3)})
+		\end{align}
+		Similarly
+		\begin{align}
+		\beta_{3} = \alpha(y^{(3)}-h_{\theta^{(2)}}(\phi(x^{(3)})) \\
+		\implies \theta^{(3)}=\beta_1 \phi(x^{(1)})+\beta_2 \phi(x^{(2)})+\beta_3 \phi(x^{(3)})
+		\end{align}
+		In general $\theta^{(i)}=\sum_{j=1}^{i}\beta_j \phi(x^{(j)})$ \\
+		$\theta^{(0)}$ is initialized with no coefficients (equivalent to zero).\\
+
+		\item We showed above that $\theta^{(i)}=\sum_{j=1}^{i}\beta_j \phi(x^{(j)})$\\
+		therefore to calculate $h_{\theta^{(i)}}(x^{(i+1)})$ we just do it as \\
+		$$\sum_{j=1}^{i} K(\beta_j\phi(x^{j}),\phi(x^{(i)}))=\sum_{j=1}^{i}\beta_j K(\phi(x^{j}),\phi(x^{(i)}))$$
+		This is more efficient than working in the high dimension space.\\
+
+		\item Since $(y^{(1)}-h_{\theta^{(0)}}(\phi(x^{(1)})) \neq 0$ only on misclassified examples, $\theta$ is only updated on these examples. So we dont need to store the ones that are classified correctly since they dont update $\theta$. This is similar to above, but slightly more efficent since we have a smaller list of examples.
+	\end{enumerate}
+\end{answer}

@@ -1,0 +1,10 @@
+\begin{answer}
+	\begin{align}
+	\theta_{MAP} &= \arg \max_{\theta} p(\theta|x;y) \\
+	&= \arg \max_{\theta} \frac{p(y|x,\theta)p(\theta|x)}{p(y|x)} \\
+	&= \arg \max_{\theta} \frac{p(y|x,\theta)p(\theta)}{p(y|x)} \\
+	&= \arg \max_{\theta} p(y|x,\theta)p(\theta)
+	\end{align}
+	
+	(Last equation is because $p(y|x)$ does not depend on $\theta$)
+\end{answer}

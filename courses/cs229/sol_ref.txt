@@ -1,0 +1,3 @@
+https://github.com/SKKSaikia/CS229_ML
+https://github.com/rohitapte/cs229
+https://github.com/lin-zju/cs229-ps-2018

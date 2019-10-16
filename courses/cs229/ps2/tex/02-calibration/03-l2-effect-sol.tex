@@ -1,0 +1,11 @@
+\begin{answer}
+	
+	When add regularization term $\lambda ||\theta||_{2}^{2}$ is added to loss function
+	
+	\begin{align}
+		\l(\theta) &= \sum_{i=1}^{m} y^{(i)}\log h_{\theta}(x^{(i)}) + (1-y^{(i)})(1-\log h_{\theta} (x^{(i)})) + \lambda||\theta||_{2}^{2} \\
+		\frac{\partial l}{\partial \theta_{j}} &= \sum_{i=1}^{m} \left( y^{(i)} - h_{\theta}(xx^{(i)}) \right) x^{(i)}_{j} + 2\lambda ||\theta||
+	\end{align}
+	
+	Due to we do not penalize on $\theta_{0}$ so it doesn't affect the property
+\end{answer}

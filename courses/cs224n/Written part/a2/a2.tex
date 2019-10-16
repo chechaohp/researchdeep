@@ -1,0 +1,211 @@
+\documentclass{article}
+\usepackage{graphicx,caption}
+\usepackage{enumitem}
+\usepackage{epstopdf,subcaption}
+\usepackage{psfrag}
+\usepackage{amsmath,amssymb,epsf}
+\usepackage{verbatim}
+\usepackage[hyphens]{url}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{bbm}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{bm}
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{0.98,0.98,0.98}
+\lstdefinelanguage{Python}{
+	numbers=left,
+	numberstyle=\footnotesize,
+	numbersep=1em,
+	xleftmargin=1em,
+	framextopmargin=2em,
+	framexbottommargin=2em,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	frame=l,
+	tabsize=4,
+	% Basic
+	basicstyle=\ttfamily\footnotesize\setstretch{1},
+	backgroundcolor=\color{Background},
+	% Comments
+	commentstyle=\color{Comments}\slshape,
+	% Strings
+	stringstyle=\color{Strings},
+	morecomment=[s][\color{Strings}]{"""}{"""},
+	morecomment=[s][\color{Strings}]{'''}{'''},
+	% keywords
+	morekeywords={import,from,class,def,for,while,if,is,in,elif,else,not,and,or
+		,print,break,continue,return,True,False,None,access,as,,del,except,exec
+		,finally,global,import,lambda,pass,print,raise,try,assert},
+	keywordstyle={\color{Keywords}\bfseries},
+	% additional keywords
+	morekeywords={[2]@invariant},
+	keywordstyle={[2]\color{Decorators}\slshape},
+	emph={self},
+	emphstyle={\color{self}\slshape},
+	%
+}
+
+%%% Change the following flag to toggle between questions or solutions
+\def\solutions{1}
+
+\pagestyle{empty} \addtolength{\textwidth}{1.0in}
+\addtolength{\textheight}{0.5in}
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\newcommand{\ruleskip}{\bigskip\hrule\bigskip}
+\newcommand{\nodify}[1]{{\sc #1}}
+\newcommand{\points}[1]{{\textbf{[#1 points]}}}
+\newcommand{\subquestionpoints}[1]{{[#1 points]}}
+\newcommand{\xsi}{x^{(i)}}
+\newcommand{\zsi}{z^{(i)}}
+\newenvironment{answer}{{\bf Answer:} \sf \begingroup\color{red}}{\endgroup}%
+
+\newcommand{\bitem}{\begin{list}{$\bullet$}%
+		{\setlength{\itemsep}{0pt}\setlength{\topsep}{0pt}%
+			\setlength{\rightmargin}{0pt}}}
+	\newcommand{\eitem}{\end{list}}
+
+\setlength{\parindent}{0pt} \setlength{\parskip}{0.5ex}
+\setlength{\unitlength}{1cm}
+
+\renewcommand{\Re}{{\mathbb R}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\what}[1]{\widehat{#1}}
+
+\renewcommand{\comment}[1]{}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\KL}{D_{\text{KL}}}
+
+
+\begin{document}
+\pagestyle{myheadings} \markboth{}{CS224n Problem Set \#2}
+
+\ifnum\solutions=1 {
+	{\huge\noindent CS 224n\\
+		Problem Set \#2 Solutions: word2vec}\\\\
+	LA DUC CHINH
+} \else {\huge
+	\noindent CS 224n, Winter 2019\\
+	Problem Set \#2: word2vec
+} \fi
+
+\ruleskip
+
+{\bf Due Wednesday, Nov 14 at 11:59 pm on Gradescope.}
+
+\medskip
+
+
+\textbf{Written: Understanding word2vec}
+
+\begin{enumerate}[label=(\alph*)]
+	\item We have
+	\begin{align}
+		\log(\hat{y}_{o}) = 1\{w=o\} \log \hat{y}_{w} = \sum_{w\in Vocab} 1\{w=o\}\log \hat{y}_{w} = \sum_{w\in Vocab} y_{w}\log \hat{y}_{w}
+	\end{align}
+	
+	\item We have
+	
+	\begin{align}
+	\frac{\partial J_{naive-softmax}(v_{c},o,U)}{\partial{v_{c}}} &=-u_{o}+ \frac{1}{\sum_{w \in Vocab} exp(u_{w}^{T}v_{c})} \sum_{w\in Vocab}exp(u_{w}^{T}v_{c})u_{w} \\
+	&=-u_{o}+ \sum_{w\in Vocab}\frac{exp(u_{w}^{T}v_{c})}{\sum_{w \in Vocab} exp(u_{w}^{T}v_{c})}u_{w} \\
+	&=-u_{o}+\sum_{w\in Vocab}P(O=w|C=c)u_{w} \\
+	&=-u_{o}+\sum_{w\in Vocab}\hat{y}_{w}u_{w} 
+	\end{align}
+	
+	Let $\hat{y}_{w}=y_{w}+(\hat{y}_{w}-y_{w})$ and we have $\sum_{w\in Vocab}y_{w}u_{w}= \sum_{w\in Vocab}1\{w=o\}u_{w}u_{o} $
+	
+	\begin{align}
+	\frac{\partial J_{naive-softmax}(v_c,o,U)}{\partial{v_{c}}} &=-u_{o}+\sum_{w\in Vocab}\hat{y_{w}}u_{w} \\
+	 &=-u_{o}+\sum_{w\in Vocab}[ y_{w}+(\hat{y}_{w}-y_{w}) ]u_{w} \\
+	 &=-u_{o}+\sum_{w\in Vocab}y_{w}u_{w} + \sum_{w\in Vocab}(\hat{y}_{w}-y_{w})u_{w} \\
+	 &=-u_{o}+u_{o}+\sum_{w\in Vocab}(\hat{y}_{w}-y_{w})u_{w} \\
+	 &=\sum_{w\in Vocab}(\hat{y}_{w}-y_{w})u_{w} \\
+	 &=\sum_{j=1}^{|V|}(\hat{y_{w}}-y_{w})u_{w} &=(\hat{y_{1}}-y_{1})u_{1}+(\hat{y_{2}}-y_{2})u_{2}+...+(\hat{y}_{|V|}-y_{|V|})u_{|V|} \\ 
+	 &= \left ( \begin{matrix} \hat{y_{1}}-y_{1} & \hat{y_{2}}-y_{2} & \cdots & \hat{y_{|V|}}-y_{|V|}\end{matrix} \right ) \left ( \begin{matrix} u_{1} \\ u_{2} \\ \vdots \\ u_{|V|} \end{matrix} \right ) \\
+	 &=(\hat y-y)U 
+	\end{align}
+	
+	\item partial derivatives outside word when $w=o$ \\
+	Similar to $(b)$ we have
+	\begin{align}
+	\frac{\partial \bm{J}}{\partial \bm{u}_{o}} = - (1- \hat{y}) \bm{v}_{c} = (\hat{y}_{w=o} - y_{y=o})\bm{v}_{c}
+	\end{align}
+	
+	When $w\neq o$
+	\begin{align}
+	\frac{\partial J}{\partial \bm{u}_{w}} &= - \frac{\partial \log \hat{y}}{\partial \bm{u}_{w}} \\
+	&= - \frac{\partial \log \hat{y}}{\partial \hat{y}} \frac{\partial \hat{y}}{\partial \bm{u}_{w}^{T} \bm{v}_{c}} \frac{\partial \bm{u}_{w}^{T} \bm{v}_{c}}{\partial \bm{u}_{w}} \\
+	&= - \frac{1}{\hat{y}} \frac{-\exp (\bm{u}_{o}^{T} \bm{v}_{c}) \exp (\bm{u}_{w}^{T} \bm{v}_{c})}{\left(\sum_{w \in Vocab} \exp (\bm{u}_{w}^{T} \bm{v}_{c})\right)^{2}} \bm{v}_{c} \\
+	&= \frac{1}{\hat{y}} \hat{y} \hat{y}_{w, w\neq o} \bm{v}_{c} \\
+	&= \hat{y}_{w, w\neq o} \bm{v}_{c} \\
+	&= (\hat{y}_{w, w\neq o}-y_{w, w\neq o}) \bm{v}_{c}
+	\end{align}
+	
+	Therefore we have
+	
+	\begin{align}
+	\frac{\partial J}{\partial \bm{u}_{w}} = (\hat{y}_{w}-y_{w}) \bm{v}_{c}
+	\end{align}
+	
+	\item Sigmoid
+	
+	\begin{align}
+	\frac{d \sigma}{d \bm{x}} = \sigma (1-\sigma)
+	\end{align}
+	
+	\item Negative Sampling loss
+	\begin{align}
+	\bm{J}_{neg-sample}(\bm{v}_{c},o,\bm{U}) = - \log (\sigma(\bm{u}_{o}^{T} \bm{v}_{c})) - \sum_{k=1}^{K} \log (\sigma(-\bm{u}_{k}^{T} \bm{v}_{c}))
+	\end{align}
+	
+	Derivative $\bm{v}_{c}$
+	
+	\begin{align}
+	\frac{\partial \bm{J}}{\partial \bm{v}_{c}} &= - \frac{1}{\sigma(\bm{u}_{o}^{T} \bm{v}_{c})} \sigma(\bm{u}_{o}^{T} \bm{v}_{c}) (1-\sigma(\bm{u}_{o}^{T} \bm{v}_{c})) \bm{u}_{o} -\sum_{k=1}^{K}\frac{1}{\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})} \sigma(-\bm{u}_{k}^{T} \bm{v}_{c}) (1-\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})) (-\bm{u}_{k}) \\
+	&= - (1-\sigma(\bm{u}_{o}^{T} \bm{v}_{c})) \bm{u}_{o} + \sum_{k=1}^{K} (1-\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})) \bm{u}_{k}
+	\end{align}
+	
+	Derivative $\bm{u}_{o}$
+	
+	\begin{align}
+	\frac{\partial \bm{J}}{\partial \bm{u}_{o}} &= - \frac{1}{\sigma(\bm{u}_{o}^{T} \bm{v}_{c})} \sigma(\bm{u}_{o}^{T} \bm{v}_{c}) (1-\sigma(\bm{u}_{o}^{T} \bm{v}_{c})) \bm{v}_{c} \\
+	&= - (1-\sigma(\bm{u}_{o}^{T} \bm{v}_{c})) \bm{v}_{c}
+	\end{align}
+	
+	Derivative $\bm{u}_{k}$
+	
+	\begin{align}
+	\frac{\partial \bm{J}}{\partial \bm{u}_{k}} &= \sum_{k=1}^{K}- \frac{1}{\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})} \sigma(\bm{u}_{k}^{T} \bm{v}_{c}) (1-\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})) (-\bm{v}_{c}) \\
+	&= \sum_{k=1}^{K}(1-\sigma(-\bm{u}_{k}^{T} \bm{v}_{c})) \bm{v}_{c}
+	\end{align}
+	
+	This loss function is more efficient because sigmoid function has less computation cost than softmax function.
+	
+	\item Skip-gram
+	
+	\begin{align}
+		\frac{\partial J_\mathrm{skip-gram}}{\partial U} &= \sum_{-m\leq j\leq m\atop j\neq 0} \frac{\partial J(v_c, w_{t+j}, U)}{\partial U} \\
+		\frac{\partial J_\mathrm{skip-gram}}{\partial v_c} &= \sum_{-m\leq j\leq m\atop j\neq 0} \frac{\partial J(v_c, w_{t+j}, U)}{\partial v_c} \\
+		\frac{\partial J_\mathrm{skip-gram}}{\partial v_w} &= 0
+	\end{align}
+\end{enumerate}
+
+\end{document} 

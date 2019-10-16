@@ -1,0 +1,42 @@
+\begin{answer}
+	\begin{enumerate}[label=(\alph*)]
+		\item $K_{1}$ is a kernel $\rightarrow$ $z^{T}K_{1}z \geq 0$
+		$K_{2}$ is a kernel $\rightarrow$ $z^{T}K_{2}z \geq 0$
+		\begin{align*}
+		\Rightarrow z^{T}Kz = z^{T}(K_{1}+K_{2})z = z^{T}K_{1}z+z^{T}K_{2}z \geq 0
+		\end{align*}
+		$\Rightarrow$ It is a kernel.
+		
+		\item Let $K_{1} = 0$ then we have $K=-K_{2} \Rightarrow z^{T}Kz = -(z^{T}K_{2}z) \leq 0 \Rightarrow$ Not a kernel.
+		
+		\item $z^{T}Kz = az^{T}K_{1}z \geq 0 \Rightarrow$ It is a kernel.
+		
+		\item $z^{T}Kz = -az^{T}K_{1}z \leq 0 \Rightarrow$ It is not a kernel.
+		
+		\item Since $K^1$ is a valid kernel, we can assume that there exists some function $\phi^1$ such that $K^1_{ij} = \phi^1(x^{(i)})^T \phi^1(x^{j})$. The same for $K^2$. In this case, 
+		
+		\begin{align}
+		z^TK z &= \sum_{i=1}^m\sum_{j=1}^m z_i\phi^1(x^{(i)})^T\phi^1(x^{(j)})\phi^2(x^{(i)})^T\phi^2(x^{(j)})z_j\\
+		&=\sum_{i=1}^m\sum_{j=1}^m z_i\sum_{k=1}^n\phi^1(x^{(i)})_k\phi^1(x^{(j)})_k\sum_{p=1}^n\phi^2(x^{(i)})_p\phi^2(x^{(j)})_pz_j\\
+		&=\sum_{k=1}^n\sum_{p=1}^m (\sum_{i=1}^mz_i\phi^1(x^{(i)})_k\phi^2(x^{(i)})_p)(\sum_{j=1}^mz_i\phi^1(x^{(j)})_k\phi^2(x^{(j)})_p)\\
+		&=\sum_{k=1}^n\sum_{p=1}^m (\sum_{i=1}^mz_i\phi^1(x^{(i)})_k\phi^2(x^{(i)})_p)^2 \ge 0
+		\end{align}
+		It is a kernel.
+		
+		\item Yes. This is symmetric in that $K_{ij} = K(x^{(i)}, x^{(j)}) = f(x^{(i)})f(x^{(j)}) = f(x^{(j)})f(x^{(i)}) = K_{ji}$. And
+		
+		$$
+		z^TKz = \sum_{i,j=1}^m z_if(x^{(i)})f(x^{(j)}) z_j= (z^Tx)^2
+		$$
+		
+		If we let $x_i = f(x^{(i)})$.
+	\item $K_{3}$ is a kernel $\implies z^{T}K_{3}z \geq 0\implies z^{T}Kz = z^{T}K_{3}z \geq 0 \implies$ it is a kernel.  
+	
+	\item The polynomial can be written as $a_tK_3(x,z)^t+a_{t-1}K_3(x,z)^{t-1}+a_{t-2}K_3(x,z)^{t-2}+\dots+a_1K_3(x,z)+a_0$\\
+	From (e) the power of a Kernel is a Kernel\\
+	From (c) a positive number times a Kernel is a Kernel\\
+	Therefore each of the terms of the polynomial is a Kernel\\
+	Finally from (a) the sum of 2 kernels is a kernel. Therefore the polynomial is a kernel.
+	\end{enumerate}
+	
+\end{answer}

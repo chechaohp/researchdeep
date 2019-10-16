@@ -1,0 +1,10 @@
+\begin{answer}
+	
+	We have
+	\begin{align}
+	l(\theta) &= \sum_{i=1}^{m} y^{(i)}\log h_{\theta} (x) + (1-y^{(i)})(1-\log h_{\theta}(x)) \\
+	\frac{\partial l}{\partial \theta_{j}} &= \sum_{i=1}^{m} \left( y^{(i)} - h_{\theta} \right)x^{(i)}_{j}
+	\end{align}
+	
+	When $\theta$ is optimal, $\frac{\partial l}{\partial \theta_{j}} = 0$, as $x_{0} = 1$ we have the denominator of property.
+\end{answer}
